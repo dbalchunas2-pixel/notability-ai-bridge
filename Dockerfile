@@ -1,0 +1,24 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY server.py .
+COPY database.py .
+COPY oauth.py .
+
+# Railway provides DATA_DIR for volume mount
+ENV DATA_DIR=/data
+RUN mkdir -p /data
+
+EXPOSE 8080
+
+CMD ["python", "server.py"]
