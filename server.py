@@ -638,30 +638,26 @@ async def terms_page(request):
 
 # --- App Assembly ---
 
-def create_app() -> Starlette:
-    """Create the Starlette application combining web routes and MCP server."""
+def create_app():
+    """Create the ASGI application combining web routes and MCP server."""
     init_db()
 
-    mcp_app = mcp.streamable_http_app()
+    # Register web routes as custom routes on the MCP server
+    mcp.custom_route("/", methods=["GET"])(landing_page)
+    mcp.custom_route("/auth", methods=["GET"])(auth_start)
+    mcp.custom_route("/auth/callback", methods=["GET"])(auth_callback)
+    mcp.custom_route("/dashboard", methods=["GET"])(dashboard)
+    mcp.custom_route("/upgrade", methods=["GET"])(upgrade)
+    mcp.custom_route("/portal", methods=["GET"])(customer_portal)
+    mcp.custom_route("/webhook", methods=["POST"])(stripe_webhook)
+    mcp.custom_route("/privacy", methods=["GET"])(privacy_page)
+    mcp.custom_route("/terms", methods=["GET"])(terms_page)
+    mcp.custom_route("/api/usage", methods=["GET"])(api_usage)
+    mcp.custom_route("/health", methods=["GET"])(health)
 
-    routes = [
-        Route("/", landing_page),
-        Route("/auth", auth_start),
-        Route("/auth/callback", auth_callback),
-        Route("/dashboard", dashboard),
-        Route("/upgrade", upgrade),
-        Route("/portal", customer_portal),
-        Route("/webhook", stripe_webhook, methods=["POST"]),
-        Route("/privacy", privacy_page),
-        Route("/terms", terms_page),
-        Route("/api/usage", api_usage),
-        Route("/health", health),
-        Mount("/mcp", app=mcp_app),
-    ]
-
-    middleware = [Middleware(APIKeyAuthMiddleware)]
-
-    app = Starlette(routes=routes, middleware=middleware)
+    # Create the ASGI app with middleware
+    # MCP endpoint will be at /mcp by default
+    app = mcp.http_app(middleware=[Middleware(APIKeyAuthMiddleware)])
     return app
 
 
@@ -669,6 +665,5 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    import uvicorn
     logger.info(f"Starting Notability MCP SaaS on port {PORT}")
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    mcp.run(transport="http", host="0.0.0.0", port=PORT)
