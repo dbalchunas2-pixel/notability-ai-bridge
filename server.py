@@ -39,6 +39,8 @@ from oauth import (
     get_auth_url, handle_oauth_callback, get_user_drive_service,
     get_user_folder_id, GOOGLE_CLIENT_ID,
 )
+from legal import PRIVACY_HTML, TERMS_HTML
+from billing import create_checkout_session, create_portal_session, handle_webhook
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("notability-mcp")
@@ -574,10 +576,64 @@ function copyText(text, btn) {{
 <h2>Setup Instructions</h2>
 <p style="color: var(--muted); font-size: 0.9rem;">Add this URL to any MCP-compatible AI assistant (Claude Desktop, Littlebird, etc.) as your MCP server endpoint.</p>
 </div>
-<footer><a href="/">Home</a> | Notability AI Bridge</footer>
+{f'<div class="card"><h2>Subscription</h2><p>Current plan: <strong>{user.get('plan', 'free')}</strong></p>{f'<a href="/upgrade?key={api_key}&plan=pro" style="display:inline-block;padding:10px 24px;background:#6366f1;color:white;text-decoration:none;border-radius:8px;font-weight:600;margin-top:12px;">Upgrade to Pro - $5/mo</a>' if user.get('plan', 'free') == 'free' else ''}{f'<a href="/portal?key={api_key}" style="display:inline-block;padding:8px 16px;background:#2a2d3a;color:#e4e4e7;text-decoration:none;border-radius:8px;font-size:0.85rem;margin-left:12px;">Manage Subscription</a>' if user.get('stripe_customer_id') else ''}</div>'}
+<footer><a href="/">Home</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a> | Notability AI Bridge</footer>
 </div>
 </body>
 </html>"""
+
+
+# --- Billing & Legal Routes ---
+
+async def upgrade(request):
+    """Start Stripe checkout for upgrading to a paid plan."""
+    api_key = request.query_params.get("key", "")
+    plan = request.query_params.get("plan", "pro")
+    if not api_key:
+        return JSONResponse({"error": "API key required"}, status_code=401)
+    user = get_user_by_api_key(api_key)
+    if not user:
+        return JSONResponse({"error": "Invalid API key"}, status_code=403)
+    try:
+        checkout_url = create_checkout_session(user["id"], plan, api_key)
+        return RedirectResponse(checkout_url)
+    except Exception as e:
+        return HTMLResponse(f"<h1>Checkout Error</h1><p>{e}</p><p><a href='/dashboard?key={api_key}'>Back</a></p>", status_code=500)
+
+async def customer_portal(request):
+    """Redirect to Stripe Customer Portal for subscription management."""
+    api_key = request.query_params.get("key", "")
+    if not api_key:
+        return JSONResponse({"error": "API key required"}, status_code=401)
+    user = get_user_by_api_key(api_key)
+    if not user:
+        return JSONResponse({"error": "Invalid API key"}, status_code=403)
+    customer_id = user.get("stripe_customer_id", "")
+    if not customer_id:
+        return HTMLResponse("<h1>No subscription found</h1><p>You don't have an active subscription to manage.</p>")
+    try:
+        portal_url = create_portal_session(customer_id, api_key)
+        return RedirectResponse(portal_url)
+    except Exception as e:
+        return HTMLResponse(f"<h1>Portal Error</h1><p>{e}</p>", status_code=500)
+
+async def stripe_webhook(request):
+    """Handle Stripe webhook events."""
+    body = await request.body()
+    signature = request.headers.get("stripe-signature", "")
+    try:
+        result = handle_webhook(body, signature)
+        return JSONResponse({"received": True, "result": result})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+async def privacy_page(request):
+    """Serve the Privacy Policy page."""
+    return HTMLResponse(PRIVACY_HTML)
+
+async def terms_page(request):
+    """Serve the Terms of Service page."""
+    return HTMLResponse(TERMS_HTML)
 
 
 # --- App Assembly ---
@@ -593,6 +649,11 @@ def create_app() -> Starlette:
         Route("/auth", auth_start),
         Route("/auth/callback", auth_callback),
         Route("/dashboard", dashboard),
+        Route("/upgrade", upgrade),
+        Route("/portal", customer_portal),
+        Route("/webhook", stripe_webhook, methods=["POST"]),
+        Route("/privacy", privacy_page),
+        Route("/terms", terms_page),
         Route("/api/usage", api_usage),
         Route("/health", health),
         Mount("/mcp", app=mcp_app),
