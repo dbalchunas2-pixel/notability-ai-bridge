@@ -14,8 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server.py .
 COPY database.py .
 COPY oauth.py .
+COPY billing.py .
+COPY legal.py .
 
-# Railway provides DATA_DIR for volume mount
 ENV DATA_DIR=/data
 RUN mkdir -p /data
 
