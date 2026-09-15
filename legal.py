@@ -1,10 +1,10 @@
 """Legal page HTML for Notability AI Bridge."""
 
 PRIVACY_HTML = """<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-<meta charset=\"utf-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy - Notability AI Bridge</title>
 <style>
 :root { --bg: #0f1117; --text: #e4e4e7; --muted: #71717a; --accent: #6366f1; }
@@ -23,9 +23,9 @@ code { background: #1a1d28; padding: 2px 6px; border-radius: 4px; font-size: 0.8
 </style>
 </head>
 <body>
-<div class=\"container\">
+<div class="container">
 <h1>Privacy Policy</h1>
-<p class=\"updated\">Last updated: September 15, 2026</p>
+<p class="updated">Last updated: September 15, 2026</p>
 <h2>Overview</h2>
 <p>Notability AI Bridge connects your Notability note backups from Google Drive to AI assistants via MCP. This Privacy Policy explains what data we collect and your rights.</p>
 <h2>What We Collect</h2>
@@ -41,9 +41,9 @@ code { background: #1a1d28; padding: 2px 6px; border-radius: 4px; font-size: 0.8
 <li><strong>We do not sell or share your data.</strong></li>
 </ul>
 <h2>Google Drive Access</h2>
-<p>We request <code>drive.readonly</code> scope - read-only access. We only access your \"Notability\" backup folder.</p>
+<p>We request <code>drive.readonly</code> scope - read-only access. We only access your "Notability" backup folder.</p>
 <h2>Google API Limited Use Disclosure</h2>
-<p>Our use of Google API services complies with the <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including Limited Use requirements. We do not use Google API data for advertising, do not transfer it to third parties except as necessary for the service, and do not use it to train AI models.</p>
+<p>Our use of Google API services complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including Limited Use requirements. We do not use Google API data for advertising, do not transfer it to third parties except as necessary for the service, and do not use it to train AI models.</p>
 <h2>Data Retention</h2>
 <ul>
 <li><strong>Account data:</strong> Until account deletion.</li>
@@ -53,7 +53,7 @@ code { background: #1a1d28; padding: 2px 6px; border-radius: 4px; font-size: 0.8
 </ul>
 <h2>Your Rights</h2>
 <ul>
-<li><strong>Revoke access:</strong> <a href=\"https://myaccount.google.com/permissions\">Google Account Permissions</a></li>
+<li><strong>Revoke access:</strong> <a href="https://myaccount.google.com/permissions">Google Account Permissions</a></li>
 <li><strong>Delete account:</strong> Email support@notabilitybridge.com</li>
 <li><strong>GDPR/CCPA:</strong> Access, rectify, erase, restrict, port. Contact us to exercise.</li>
 </ul>
@@ -64,17 +64,17 @@ code { background: #1a1d28; padding: 2px 6px; border-radius: 4px; font-size: 0.8
 <li>No passwords (Google OAuth only).</li>
 </ul>
 <h2>Contact</h2>
-<p>Questions? Email <a href=\"mailto:support@notabilitybridge.com\">support@notabilitybridge.com</a></p>
-<div class=\"footer\"><p>Notability AI Bridge is not affiliated with Notability (Ginger Labs) or Google.</p></div>
+<p>Questions? Email <a href="mailto:support@notabilitybridge.com">support@notabilitybridge.com</a></p>
+<div class="footer"><p>Notability AI Bridge is not affiliated with Notability (Ginger Labs) or Google.</p></div>
 </div>
 </body>
-</html>\"\"\"
+</html>"""
 
-TERMS_HTML = \"\"\"<!DOCTYPE html>
-<html lang=\"en\">
+TERMS_HTML = """<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset=\"utf-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Terms of Service - Notability AI Bridge</title>
 <style>
 :root { --bg: #0f1117; --text: #e4e4e7; --muted: #71717a; --accent: #6366f1; }
@@ -92,9 +92,9 @@ a { color: var(--accent); }
 </style>
 </head>
 <body>
-<div class=\"container\">
+<div class="container">
 <h1>Terms of Service</h1>
-<p class=\"updated\">Last updated: September 15, 2026</p>
+<p class="updated">Last updated: September 15, 2026</p>
 <h2>1. Acceptance</h2>
 <p>By using Notability AI Bridge, you agree to these Terms.</p>
 <h2>2. Service Description</h2>
@@ -110,10 +110,10 @@ a { color: var(--accent); }
 <h2>5. Cancellation</h2>
 <p>Cancel anytime via Stripe Customer Portal. No refunds for partial periods.</p>
 <h2>6. Service Availability</h2>
-<p>Provided \"as is\" without uptime guarantees. May be modified or discontinued.</p>
+<p>Provided "as is" without uptime guarantees. May be modified or discontinued.</p>
 <h2>7. Limitation of Liability</h2>
 <ul>
-<li>Service provided \"AS IS\" without warranties.</li>
+<li>Service provided "AS IS" without warranties.</li>
 <li>Not liable for indirect, consequential, or punitive damages.</li>
 <li>Total liability limited to amount paid in preceding 12 months.</li>
 <li>Not liable for third-party AI processing.</li>
@@ -123,8 +123,8 @@ a { color: var(--accent); }
 <h2>9. Governing Law</h2>
 <p>Laws of the State of New Jersey, USA.</p>
 <h2>10. Contact</h2>
-<p>Email <a href=\"mailto:support@notabilitybridge.com\">support@notabilitybridge.com</a></p>
-<div class=\"footer\"><p>Notability AI Bridge is not affiliated with Notability (Ginger Labs) or Google.</p></div>
+<p>Email <a href="mailto:support@notabilitybridge.com">support@notabilitybridge.com</a></p>
+<div class="footer"><p>Notability AI Bridge is not affiliated with Notability (Ginger Labs) or Google.</p></div>
 </div>
 </body>
-</html>\"\"\"
+</html>"""
