@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notability AI Bridge - Your Notes, Everywhere AI Lives</title>
+<style>
+:root{--bg:#08090d;--card:#13151f;--card-hover:#1a1d2a;--border:#1e2130;--border-hover:#2a2e42;--accent:#6366f1;--accent-light:#818cf8;--accent-glow:rgba(99,102,241,0.15);--text:#f0f0f5;--text-secondary:#a1a1aa;--text-muted:#71717a;--success:#22c55e;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--radius:14px;--radius-lg:20px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:4px}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px) saturate(1.2);background:rgba(8,9,13,0.7);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),#c084fc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--accent);color:#fff;text-decoration:none;border-radius:10px;font-size:.85rem;font-weight:600;transition:all .2s}
+.nav-cta:hover{background:var(--accent-light);transform:translateY(-1px);box-shadow:0 8px 24px var(--accent-glow)}
+.hero{position:relative;padding:140px 24px 100px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:60px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);border-radius:100px;font-size:.8rem;color:var(--accent-light);font-weight:500;margin-bottom:24px}
+.hero-badge .pulse{width:8px;height:8px;background:var(--success);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
+.hero h1{font-size:3.2rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;margin-bottom:20px}
+.hero h1 .gradient{background:linear-gradient(135deg,var(--accent-light),#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.15rem;color:var(--text-secondary);max-width:440px;margin-bottom:32px}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;font-size:.95rem;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;border:none}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(99,102,241,0.25)}
+.btn-primary:hover{background:var(--accent-light);transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,0.35)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border-hover)}
+.btn-secondary:hover{background:var(--card-hover);border-color:var(--border-hover)}
+.hero-visual{position:relative}
+.terminal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.4),0 0 0 1px rgba(99,102,241,0.05)}
+.terminal-header{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
+.terminal-dot{width:12px;height:12px;border-radius:50%}
+.terminal-dot.r{background:#ff5f56}.terminal-dot.y{background:#ffbd2e}.terminal-dot.g{background:#27c93f}
+.terminal-title{margin-left:8px;font-size:.75rem;color:var(--text-muted);font-family:'SF Mono',Monaco,monospace}
+.terminal-body{padding:20px;font-family:'SF Mono',Monaco,monospace;font-size:.8rem;line-height:1.7;color:var(--text-secondary)}
+.terminal-body .comment{color:var(--text-muted)}.terminal-body .keyword{color:#c084fc}.terminal-body .string{color:#86efac}.terminal-body .prompt{color:var(--accent-light)}.terminal-body .output{color:var(--text)}
+.hero-visual::before{content:'';position:absolute;top:50%;left:50%;width:300px;height:300px;background:radial-gradient(circle,rgba(99,102,241,0.15),transparent 70%);transform:translate(-50%,-50%);z-index:-1;pointer-events:none}
+.logos{padding:60px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
+.logos p{font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:24px}
+.logo-grid{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;align-items:center}
+.logo-item{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.9rem;font-weight:600;opacity:.6;transition:opacity .3s}.logo-item:hover{opacity:1}
+.section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:60px}
+.section-header h2{font-size:2.2rem;font-weight:700;margin-bottom:12px}
+.section-header p{color:var(--text-secondary);font-size:1.1rem;max-width:500px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.step{position:relative;padding:36px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);transition:all .3s}
+.step:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.step-num{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#c084fc);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;margin-bottom:20px}
+.step h3{font-size:1.1rem;margin-bottom:10px}
+.step p{color:var(--text-secondary);font-size:.9rem;line-height:1.6}
+.step-arrow{position:absolute;top:50%;right:-26px;transform:translateY(-50%);color:var(--text-muted);font-size:1.2rem}
+@media(max-width:767px){.step-arrow{display:none}}
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.feature-card{padding:32px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);transition:all .3s}
+.feature-card:hover{background:var(--card-hover);border-color:var(--border-hover)}
+.feature-icon{width:44px;height:44px;border-radius:12px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:16px}
+.feature-card h3{font-size:1.05rem;margin-bottom:8px}
+.feature-card p{color:var(--text-secondary);font-size:.9rem;line-height:1.6}
+.demo{background:linear-gradient(180deg,transparent 0%,rgba(99,102,241,0.03) 50%,transparent 100%)}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.demo-code{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.demo-code pre{padding:24px;font-family:'SF Mono',Monaco,monospace;font-size:.8rem;line-height:1.7;overflow-x:auto}
+.demo-text h3{font-size:1.8rem;margin-bottom:16px}
+.demo-text p{color:var(--text-secondary);margin-bottom:20px}
+.demo-list{list-style:none}.demo-list li{display:flex;align-items:center;gap:10px;padding:8px 0;color:var(--text);font-size:.95rem}.demo-list li::before{content:'\2713';color:var(--success);font-weight:700;font-size:1rem}
+.pricing{background:linear-gradient(180deg,rgba(99,102,241,0.03),transparent)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.pricing-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;display:flex;flex-direction:column;transition:all .3s}
+.pricing-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.pricing-card.popular{border-color:var(--accent);position:relative}
+.pricing-card.popular::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:4px 14px;border-radius:100px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.pricing-card h3{font-size:1rem;margin-bottom:4px}
+.pricing-card .price{font-size:2.4rem;font-weight:800;margin:12px 0 4px}.pricing-card .price span{font-size:.9rem;color:var(--text-muted);font-weight:500}
+.pricing-card .desc{color:var(--text-secondary);font-size:.85rem;margin-bottom:20px}
+.pricing-card ul{list-style:none;margin-bottom:24px;flex-grow:1}
+.pricing-card li{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.85rem;color:var(--text-secondary)}.pricing-card li::before{content:'\2713';color:var(--success);font-weight:700}
+.pricing-card .btn{width:100%;justify-content:center}
+.faq-list{max-width:700px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:24px 0;cursor:pointer;font-size:1rem;font-weight:600;color:var(--text);background:none;border:none;width:100%;text-align:left}.faq-q:hover{color:var(--accent-light)}
+.faq-icon{color:var(--text-muted);font-size:1.2rem;transition:transform .3s}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;color:var(--text-secondary);font-size:.9rem;line-height:1.7}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:24px}
+.cta-banner{padding:80px 24px;text-align:center;max-width:700px;margin:0 auto}
+.cta-banner h2{font-size:2.2rem;margin-bottom:16px}
+.cta-banner p{color:var(--text-secondary);font-size:1.1rem;margin-bottom:32px}
+.footer{border-top:1px solid var(--border);padding:60px 24px 40px;max-width:1100px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand{max-width:280px}.footer-brand .logo{margin-bottom:16px}.footer-brand p{color:var(--text-muted);font-size:.85rem;line-height:1.6}
+.footer-col h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:16px}
+.footer-col a{display:block;color:var(--text-secondary);text-decoration:none;font-size:.85rem;padding:6px 0;transition:color .2s}.footer-col a:hover{color:var(--text)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:.8rem}
+@media(max-width:900px){.hero{grid-template-columns:1fr;text-align:center;padding-top:120px}.hero-sub{margin-left:auto;margin-right:auto}.hero-ctas{justify-content:center}.hero-visual{order:-1;max-width:500px;margin:0 auto}.steps{grid-template-columns:1fr}.features-grid{grid-template-columns:1fr}.demo-grid{grid-template-columns:1fr}.pricing-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.hero h1{font-size:2.2rem}.section-header h2{font-size:1.7rem}.pricing-grid{grid-template-columns:1fr}.nav-links{display:none}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:12px;text-align:center}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="logo"><div class="logo-icon">🔗</div><span>Notability AI Bridge</span></a>
+    <ul class="nav-links"><li><a href="#how-it-works">How it Works</a></li><li><a href="#features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul>
+    <a href="/auth" class="nav-cta">Get Started →</a>
+  </div>
+</nav>
+<section class="hero">
+  <div>
+    <div class="hero-badge"><span class="pulse"></span>Now live on Railway</div>
+    <h1>Your Notes.<br><span class="gradient">Everywhere AI Lives.</span></h1>
+    <p class="hero-sub">Connect your Notability PDF backups to any AI assistant. Search, read, and query your handwritten notes from Claude, ChatGPT, Littlebird, and more — without copy-pasting.</p>
+    <div class="hero-ctas"><a href="/auth" class="btn btn-primary">Connect Google Drive →</a><a href="#how-it-works" class="btn btn-secondary">See How it Works</a></div>
+  </div>
+  <div class="hero-visual">
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">notability-mcp</span></div>
+      <div class="terminal-body">
+<span class="prompt">$</span> <span class="keyword">list_notes</span> folder="Earth Science"<br>
+<span class="output">Lecture 1 - Plate Tectonics.pdf | 234 KB | 2026-09-14</span><br>
+<span class="output">Lecture 2 - Minerals.pdf | 189 KB | 2026-09-14</span><br>
+<span class="output">Field Trip Notes.pdf | 456 KB | 2026-09-10</span><br><br>
+<span class="prompt">$</span> <span class="keyword">search_notes</span> query="granite composition"<br>
+<span class="output">Found 3 match(es):</span><br>
+<span class="output">  ...feldspar, quartz, and mica. Granite is an intrusive igneous rock...</span><br><br>
+<span class="prompt">$</span> <span class="keyword">read_note</span> note_id="abc123"<br>
+<span class="output">--- Page 1 ---</span><br>
+<span class="output">The three main types of rocks are igneous, sedimentary...</span><br>
+<span class="comment"># Your AI now has full context from your notes</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="logos">
+  <p>Works with your favorite AI assistants</p>
+  <div class="logo-grid">
+    <div class="logo-item">🔮 Claude</div>
+    <div class="logo-item">✨ ChatGPT</div>
+    <div class="logo-item">⭐ Cursor</div>
+    <div class="logo-item">🐦 Littlebird</div>
+  </div>
+</section>
+<section class="section" id="how-it-works">
+  <div class="section-header"><h2>Three steps to AI-powered notes</h2><p>No apps to install. No exports to manage. Your notes stay in Google Drive where they already are.</p></div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><h3>Connect Google Drive</h3><p>One-click OAuth connects your Notability PDF auto-backup folder. Read-only permissions. You control access.</p><span class="step-arrow">→</span></div>
+    <div class="step"><div class="step-num">2</div><h3>Get Your API Key</h3><p>We generate a unique MCP endpoint URL just for you. Copy it to your AI assistant's MCP settings.</p><span class="step-arrow">→</span></div>
+    <div class="step"><div class="step-num">3</div><h3>Ask Your AI Anything</h3><p>"Find my geology notes about granite." Your AI searches, reads, and answers using your actual handwriting.</p></div>
+  </div>
+</section>
+<section class="section" id="features">
+  <div class="section-header"><h2>Built for serious note-takers</h2><p>Every feature designed around how you actually use Notability and AI together.</p></div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">🔍</div><h3>Full-Text Search</h3><p>Search across every page of every note by keyword. Get context snippets without opening Notability once.</p></div>
+    <div class="feature-card"><div class="feature-icon">☁️</div><h3>Always-On Cloud Access</h3><p>Runs on Railway 24/7. Your AI can read notes even when your Mac is off or your phone is dead.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔐</div><h3>Privacy-First OAuth</h3><p>Read-only Google Drive scope. No data stored on our servers. Revoke anytime from your Google Account.</p></div>
+    <div class="feature-card"><div class="feature-icon">📄</div><h3>PDF Text Extraction</h3><p>Handwritten notes, typed text, and imported PDFs — all parsed and made searchable for your AI.</p></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><h3>Usage Dashboard</h3><p>Track daily tool calls, see which notes your AI reads most, and manage your plan from a clean dashboard.</p></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>MCP-Native Protocol</h3><p>Built on the open Model Context Protocol. Works with any MCP-compatible AI assistant, today and tomorrow.</p></div>
+  </div>
+</section>
+<section class="section demo">
+  <div class="demo-grid">
+    <div class="demo-code"><div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Claude Desktop</span></div><pre><span class="comment"># Ask your AI about your notes naturally</span>
+<span class="prompt">></span> <span class="output">What did I write about plate tectonics in my geology class?</span>
+
+<span class="comment"># The AI calls MCP tools automatically</span>
+<span class="prompt">$</span> <span class="keyword">search_notes</span>(query=<span class="string">"plate tectonics"</span>)
+
+<span class="comment"># Returns matching notes with context</span>
+<span class="output">Found in "Lecture 3 - Plate Tectonics.pdf":</span>
+<span class="output">  "The lithosphere is divided into plates that move on the asthenosphere..."</span>
+
+<span class="prompt">$</span> <span class="keyword">read_note</span>(note_id=<span class="string">"abc123"</span>)
+
+<span class="comment"># Full note text streamed to your AI</span>
+<span class="output">--- Page 1 ---</span>
+<span class="output">Convergent boundaries form mountains...</span></pre></div>
+    <div class="demo-text"><h3>Your AI finally understands your handwriting</h3><p>Instead of summarizing from memory or guessing, your AI reads the actual PDFs of your handwritten notes. Every diagram annotation, every margin note, every crossed-out thought — searchable and queriable.</p><ul class="demo-list"><li>No more copy-pasting between Notability and ChatGPT</li><li>Search across semesters of notes in seconds</li><li>Let your AI quiz you from your own handwriting</li><li>Generate study guides from scattered lecture notes</li></ul></div>
+  </div>
+</section>
+<section class="section pricing" id="pricing">
+  <div class="section-header"><h2>Simple, transparent pricing</h2><p>Start free. Upgrade when you need more. No credit card required.</p></div>
+  <div class="pricing-grid">
+    <div class="pricing-card"><h3>Free</h3><div class="price">$0<span>/mo</span></div><p class="desc">For trying it out</p><ul><li>50 tool calls / day</li><li>All 4 MCP tools</li><li>1 Google Drive account</li><li>Community support</li></ul><a href="/auth" class="btn btn-secondary">Get Started</a></div>
+    <div class="pricing-card popular"><h3>Pro</h3><div class="price">$5<span>/mo</span></div><p class="desc">For daily note-takers</p><ul><li>1,000 tool calls / day</li><li>All 4 MCP tools</li><li>1 Google Drive account</li><li>Priority email support</li></ul><a href="/auth" class="btn btn-primary">Start Pro Trial</a></div>
+    <div class="pricing-card"><h3>Team</h3><div class="price">$15<span>/mo</span></div><p class="desc">For study groups</p><ul><li>5,000 tool calls / day</li><li>All 4 MCP tools</li><li>Shared Drive access</li><li>Priority support</li></ul><a href="/auth" class="btn btn-secondary">Contact Us</a></div>
+    <div class="pricing-card"><h3>Enterprise</h3><div class="price">Custom</div><p class="desc">For institutions</p><ul><li>Unlimited tool calls</li><li>All 4 MCP tools</li><li>Multiple Drive accounts</li><li>Dedicated support</li></ul><a href="mailto:owner@balchunassustainability.com" class="btn btn-secondary">Contact Sales</a></div>
+  </div>
+</section>
+<section class="section" id="faq">
+  <div class="section-header"><h2>Frequently asked questions</h2></div>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is this affiliated with Notability or Ginger Labs?<span class="faq-icon">+</span></button><div class="faq-a">No — Notability AI Bridge is an independent tool built by a solo developer. It reads your Notability PDF auto-backups from Google Drive using the official Google Drive API. We are not affiliated with Notability, Ginger Labs, or Google.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does my data stay private?<span class="faq-icon">+</span></button><div class="faq-a">We request read-only access to your Google Drive via OAuth 2.0. PDFs are streamed in-memory and never stored on our servers. You can revoke access anytime from your Google Account permissions. We do not train AI models on your notes.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What AI assistants does this work with?<span class="faq-icon">+</span></button><div class="faq-a">Any MCP-compatible assistant: Claude (Desktop & Code), ChatGPT, Cursor, Littlebird, Windsurf, Goose, Gemini CLI, and more. If your AI supports custom MCP servers, it works with Notability AI Bridge.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need to keep my computer on?<span class="faq-icon">+</span></button><div class="faq-a">No. The MCP server runs in the cloud on Railway. Your AI assistant connects to our server, which then reads your notes from Google Drive. Your Mac can be off and your AI still has full access.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I cancel anytime?<span class="faq-icon">+</span></button><div class="faq-a">Yes. Free plans never expire. Paid plans can be cancelled from the billing dashboard. Your API key stops working when you cancel, but reconnecting takes 30 seconds if you come back.</div></div>
+  </div>
+</section>
+<section class="cta-banner"><h2>Ready to talk to your notes?</h2><p>Join students, researchers, and professionals who've stopped copy-pasting and started querying.</p><a href="/auth" class="btn btn-primary" style="padding:16px 36px;font-size:1.05rem">Connect Your Google Drive →</a></section>
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="logo"><div class="logo-icon">🔗</div><span>Notability AI Bridge</span></div><p>An independent bridge between Notability's Google Drive backups and any MCP-compatible AI assistant. Built by a student who was tired of copy-pasting.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how-it-works">How it Works</a><a href="#faq">FAQ</a></div>
+    <div class="footer-col"><h4>Legal</h4><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="/google-api-disclosure">Google API Disclosure</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="mailto:owner@balchunassustainability.com">Email Support</a><a href="https://github.com/dbalchunas2-pixel/notability-ai-bridge">GitHub</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Notability AI Bridge. Independent tool, not affiliated with Notability or Google.</span><span>Built with 💻 by David Balchunas</span></div>
+</footer>
+</body>
+</html>

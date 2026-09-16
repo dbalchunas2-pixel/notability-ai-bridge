@@ -314,8 +314,15 @@ def get_base_url(request: Request) -> str:
 
 
 async def landing_page(request: Request):
-    return HTMLResponse(LANDING_HTML)
-
+    """Serve the landing page."""
+    try:
+        with open("landing.html", "r") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="<h1>Error: landing.html not found</h1>",
+            status_code=500
+        )
 
 async def auth_start(request: Request):
     base = get_base_url(request)
@@ -399,92 +406,6 @@ async def health(request: Request):
 # (Landing page and dashboard templates are large HTML strings)
 # Full templates at: https://github.com/dbalchunas2-pixel/notability-ai-bridge/blob/main/server.py
 
-LANDING_HTML = """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Notability AI Bridge - Connect Your Notes to Any AI</title>
-<style>
-:root { --bg: #0f1117; --card: #1a1d28; --accent: #6366f1; --text: #e4e4e7; --muted: #71717a; }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-.container { max-width: 720px; margin: 0 auto; padding: 80px 24px; }
-.hero { text-align: center; margin-bottom: 60px; }
-.hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: 1.2rem; color: var(--muted); max-width: 540px; margin: 0 auto; }
-.cta { display: inline-block; margin-top: 32px; padding: 16px 40px; background: var(--accent); color: white; text-decoration: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; transition: transform 0.2s; }
-.cta:hover { transform: translateY(-2px); }
-.features { display: grid; gap: 24px; margin-top: 60px; }
-.feature { background: var(--card); padding: 28px; border-radius: 16px; border: 1px solid #2a2d3a; }
-.feature h3 { font-size: 1.1rem; margin-bottom: 8px; color: #a5b4fc; }
-.feature p { color: var(--muted); font-size: 0.95rem; }
-.pricing { margin-top: 60px; text-align: center; }
-.pricing h2 { font-size: 1.8rem; margin-bottom: 24px; }
-.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 540px; margin: 0 auto; }
-.plan { background: var(--card); padding: 28px; border-radius: 16px; border: 1px solid #2a2d3a; text-align: center; }
-.plan .price { font-size: 2rem; font-weight: 800; margin: 12px 0; }
-.plan .price small { font-size: 0.9rem; color: var(--muted); }
-.plan ul { list-style: none; margin: 16px 0; }
-.plan li { padding: 6px 0; color: var(--muted); font-size: 0.9rem; }
-.plan.pro { border-color: var(--accent); }
-.badge { display: inline-block; padding: 4px 12px; background: var(--accent); border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-footer { text-align: center; margin-top: 80px; padding: 24px; color: var(--muted); font-size: 0.85rem; }
-</style>
-</head>
-<body>
-<div class="container">
-<div class="hero">
-<h1>Notability AI Bridge</h1>
-<p>Connect your Notability notes to any AI assistant. Search, read, and query your handwritten notes from Claude, ChatGPT, Littlebird, and more.</p>
-<a href="/auth" class="cta">Connect Your Google Drive</a>
-</div>
-<div class="features">
-<div class="feature">
-<h3>Universal AI Access</h3>
-<p>Any MCP-compatible AI tool can search and read your Notability PDF backups. No more copy-pasting between apps.</p>
-</div>
-<div class="feature">
-<h3>Works While You Sleep</h3>
-<p>Runs in the cloud on Railway. Your AI assistant can access your notes even when your Mac is off.</p>
-</div>
-<div class="feature">
-<h3>Full-Text Search</h3>
-<p>Search across all your notes by keyword. Get matching context snippets instantly, without opening Notability.</p>
-</div>
-<div class="feature">
-<h3>Privacy First</h3>
-<p>OAuth 2.0 means you control access. Read-only scope. Revoke anytime from your Google account.</p>
-</div>
-</div>
-<div class="pricing">
-<h2>Simple Pricing</h2>
-<div class="plans">
-<div class="plan">
-<div class="price">$0<small>/mo</small></div>
-<div>Free</div>
-<ul>
-<li>50 tool calls / day</li>
-<li>All 4 tools</li>
-<li>1 Google Drive account</li>
-</ul>
-</div>
-<div class="plan pro">
-<span class="badge">Popular</span>
-<div class="price">$5<small>/mo</small></div>
-<div>Pro</div>
-<ul>
-<li>1,000 tool calls / day</li>
-<li>Priority support</li>
-<li>Advanced search</li>
-</ul>
-</div>
-</div>
-</div>
-<footer>Notability AI Bridge is an independent tool. Not affiliated with Notability or Google.</footer>
-</div>
-</body>
-</html>"""
 
 
 def render_dashboard(user, stats, used_today, limit, mcp_url, welcome):
@@ -667,3 +588,4 @@ app = create_app()
 if __name__ == "__main__":
     logger.info(f"Starting Notability MCP SaaS on port {PORT}")
     mcp.run(transport="http", host="0.0.0.0", port=PORT)
+
