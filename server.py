@@ -316,7 +316,7 @@ def get_base_url(request: Request) -> str:
 async def landing_page(request: Request):
     """Serve the landing page."""
     try:
-        with open("landing.html", "r") as f:
+        with open(Path(__file__).parent / "landing.html", "r") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(

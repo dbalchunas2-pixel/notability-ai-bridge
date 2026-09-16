@@ -16,6 +16,7 @@ COPY database.py .
 COPY oauth.py .
 COPY billing.py .
 COPY legal.py .
+COPY landing.html .
 
 ENV DATA_DIR=/data
 RUN mkdir -p /data
