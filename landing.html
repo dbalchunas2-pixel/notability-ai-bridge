@@ -76,8 +76,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .pricing-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;display:flex;flex-direction:column;transition:all .3s}
 .pricing-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
-.pricing-card.popular{border-color:var(--accent);position:relative}
-.pricing-card.popular::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:4px 14px;border-radius:100px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
 .pricing-card h3{font-size:1rem;margin-bottom:4px}
 .pricing-card .price{font-size:2.4rem;font-weight:800;margin:12px 0 4px}.pricing-card .price span{font-size:.9rem;color:var(--text-muted);font-weight:500}
 .pricing-card .desc{color:var(--text-secondary);font-size:.85rem;margin-bottom:20px}
@@ -108,13 +107,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <nav class="navbar">
   <div class="nav-inner">
     <a href="/" class="logo"><div class="logo-icon">🔗</div><span>Notability AI Bridge</span></a>
-    <ul class="nav-links"><li><a href="#how-it-works">How it Works</a></li><li><a href="#features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul>
+    <ul class="nav-links"><li><a href="#how-it-works">How it Works</a></li><li><a href="#features">Features</a></li><li><a href="#open-source">Open Source</a></li><li><a href="#faq">FAQ</a></li></ul>
     <a href="/auth" class="nav-cta">Get Started →</a>
   </div>
 </nav>
 <section class="hero">
   <div>
-    <div class="hero-badge"><span class="pulse"></span>Now live on Railway</div>
+    <div class="hero-badge"><span class="pulse"></span>Free and open source</div>
     <h1>Your Notes.<br><span class="gradient">Everywhere AI Lives.</span></h1>
     <p class="hero-sub">Connect your Notability PDF backups to any AI assistant. Search, read, and query your handwritten notes from Claude, ChatGPT, Littlebird, and more — without copy-pasting.</p>
     <div class="hero-ctas"><a href="/auth" class="btn btn-primary">Connect Google Drive →</a><a href="#how-it-works" class="btn btn-secondary">See How it Works</a></div>
@@ -151,7 +150,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="section-header"><h2>Three steps to AI-powered notes</h2><p>No apps to install. No exports to manage. Your notes stay in Google Drive where they already are.</p></div>
   <div class="steps">
     <div class="step"><div class="step-num">1</div><h3>Connect Google Drive</h3><p>One-click OAuth connects your Notability PDF auto-backup folder. Read-only permissions. You control access.</p><span class="step-arrow">→</span></div>
-    <div class="step"><div class="step-num">2</div><h3>Get Your API Key</h3><p>We generate a unique MCP endpoint URL just for you. Copy it to your AI assistant's MCP settings.</p><span class="step-arrow">→</span></div>
+    <div class="step"><div class="step-num">2</div><h3>Get Your API Key</h3><p>Your instance generates a unique MCP endpoint URL just for you. Copy it to your AI assistant's MCP settings.</p><span class="step-arrow">→</span></div>
     <div class="step"><div class="step-num">3</div><h3>Ask Your AI Anything</h3><p>"Find my geology notes about granite." Your AI searches, reads, and answers using your actual handwriting.</p></div>
   </div>
 </section>
@@ -160,16 +159,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="features-grid">
     <div class="feature-card"><div class="feature-icon">🔍</div><h3>Full-Text Search</h3><p>Search across every page of every note by keyword. Get context snippets without opening Notability once.</p></div>
     <div class="feature-card"><div class="feature-icon">☁️</div><h3>Always-On Cloud Access</h3><p>Runs on Railway 24/7. Your AI can read notes even when your Mac is off or your phone is dead.</p></div>
-    <div class="feature-card"><div class="feature-icon">🔐</div><h3>Privacy-First OAuth</h3><p>Read-only Google Drive scope. No data stored on our servers. Revoke anytime from your Google Account.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔐</div><h3>Privacy-First OAuth</h3><p>Read-only Google Drive scope. No data stored on the server. Revoke anytime from your Google Account.</p></div>
     <div class="feature-card"><div class="feature-icon">📄</div><h3>PDF Text Extraction</h3><p>Handwritten notes, typed text, and imported PDFs — all parsed and made searchable for your AI.</p></div>
-    <div class="feature-card"><div class="feature-icon">📊</div><h3>Usage Dashboard</h3><p>Track daily tool calls, see which notes your AI reads most, and manage your plan from a clean dashboard.</p></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><h3>Usage Dashboard</h3><p>Track daily tool calls and see which notes your AI reads most from a clean dashboard.</p></div>
     <div class="feature-card"><div class="feature-icon">⚡</div><h3>MCP-Native Protocol</h3><p>Built on the open Model Context Protocol. Works with any MCP-compatible AI assistant, today and tomorrow.</p></div>
   </div>
 </section>
 <section class="section demo">
   <div class="demo-grid">
     <div class="demo-code"><div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Claude Desktop</span></div><pre><span class="comment"># Ask your AI about your notes naturally</span>
-<span class="prompt">></span> <span class="output">What did I write about plate tectonics in my geology class?</span>
+<span class="prompt">&gt;</span> <span class="output">What did I write about plate tectonics in my geology class?</span>
 
 <span class="comment"># The AI calls MCP tools automatically</span>
 <span class="prompt">$</span> <span class="keyword">search_notes</span>(query=<span class="string">"plate tectonics"</span>)
@@ -186,32 +185,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="demo-text"><h3>Your AI finally understands your handwriting</h3><p>Instead of summarizing from memory or guessing, your AI reads the actual PDFs of your handwritten notes. Every diagram annotation, every margin note, every crossed-out thought — searchable and queriable.</p><ul class="demo-list"><li>No more copy-pasting between Notability and ChatGPT</li><li>Search across semesters of notes in seconds</li><li>Let your AI quiz you from your own handwriting</li><li>Generate study guides from scattered lecture notes</li></ul></div>
   </div>
 </section>
-<section class="section pricing" id="pricing">
-  <div class="section-header"><h2>Simple, transparent pricing</h2><p>Start free. Upgrade when you need more. No credit card required.</p></div>
-  <div class="pricing-grid">
-    <div class="pricing-card"><h3>Free</h3><div class="price">$0<span>/mo</span></div><p class="desc">For trying it out</p><ul><li>50 tool calls / day</li><li>All 4 MCP tools</li><li>1 Google Drive account</li><li>Community support</li></ul><a href="/auth" class="btn btn-secondary">Get Started</a></div>
-    <div class="pricing-card popular"><h3>Pro</h3><div class="price">$5<span>/mo</span></div><p class="desc">For daily note-takers</p><ul><li>1,000 tool calls / day</li><li>All 4 MCP tools</li><li>1 Google Drive account</li><li>Priority email support</li></ul><a href="/auth" class="btn btn-primary">Start Pro Trial</a></div>
-    <div class="pricing-card"><h3>Team</h3><div class="price">$15<span>/mo</span></div><p class="desc">For study groups</p><ul><li>5,000 tool calls / day</li><li>All 4 MCP tools</li><li>Shared Drive access</li><li>Priority support</li></ul><a href="/auth" class="btn btn-secondary">Contact Us</a></div>
-    <div class="pricing-card"><h3>Enterprise</h3><div class="price">Custom</div><p class="desc">For institutions</p><ul><li>Unlimited tool calls</li><li>All 4 MCP tools</li><li>Multiple Drive accounts</li><li>Dedicated support</li></ul><a href="mailto:owner@balchunassustainability.com" class="btn btn-secondary">Contact Sales</a></div>
+<section class="section" id="open-source">
+  <div class="section-header"><h2>Free and open source</h2><p>No subscriptions. No credit card. No paywalled notes.</p></div>
+  <div class="pricing-grid" style="grid-template-columns:1fr;max-width:720px;margin:0 auto">
+    <div class="pricing-card" style="align-items:center;text-align:center">
+      <h3>Self-Host It</h3>
+      <div class="price">MIT<span style="font-size:.9rem;color:var(--text-muted);font-weight:500">&nbsp;licensed</span></div>
+      <p class="desc">Your notes. Your Google Drive. Your server.</p>
+      <ul style="text-align:left"><li>Deploy your own instance on Railway in minutes</li><li>All 4 MCP tools, unlimited usage - you set the limits</li><li>Read-only Google Drive access, streamed in-memory</li><li>Fork it, modify it, make it yours</li></ul>
+      <a href="https://github.com/dbalchunas2-pixel/notability-ai-bridge" class="btn btn-primary">View on GitHub</a>
+    </div>
   </div>
 </section>
 <section class="section" id="faq">
   <div class="section-header"><h2>Frequently asked questions</h2></div>
   <div class="faq-list">
     <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is this affiliated with Notability or Ginger Labs?<span class="faq-icon">+</span></button><div class="faq-a">No — Notability AI Bridge is an independent tool built by a solo developer. It reads your Notability PDF auto-backups from Google Drive using the official Google Drive API. We are not affiliated with Notability, Ginger Labs, or Google.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does my data stay private?<span class="faq-icon">+</span></button><div class="faq-a">We request read-only access to your Google Drive via OAuth 2.0. PDFs are streamed in-memory and never stored on our servers. You can revoke access anytime from your Google Account permissions. We do not train AI models on your notes.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does my data stay private?<span class="faq-icon">+</span></button><div class="faq-a">Your instance requests read-only access to your Google Drive via OAuth 2.0. PDFs are streamed in-memory and never stored on disk. You can revoke access anytime from your Google Account permissions. Your notes are never used to train AI models.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What AI assistants does this work with?<span class="faq-icon">+</span></button><div class="faq-a">Any MCP-compatible assistant: Claude (Desktop & Code), ChatGPT, Cursor, Littlebird, Windsurf, Goose, Gemini CLI, and more. If your AI supports custom MCP servers, it works with Notability AI Bridge.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need to keep my computer on?<span class="faq-icon">+</span></button><div class="faq-a">No. The MCP server runs in the cloud on Railway. Your AI assistant connects to our server, which then reads your notes from Google Drive. Your Mac can be off and your AI still has full access.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I cancel anytime?<span class="faq-icon">+</span></button><div class="faq-a">Yes. Free plans never expire. Paid plans can be cancelled from the billing dashboard. Your API key stops working when you cancel, but reconnecting takes 30 seconds if you come back.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need to keep my computer on?<span class="faq-icon">+</span></button><div class="faq-a">No. Your instance runs in the cloud on Railway. Your AI assistant connects to it, and it reads your notes from Google Drive. Your Mac can be off and your AI still has full access.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What does it cost?<span class="faq-icon">+</span></button><div class="faq-a">Nothing. Notability AI Bridge is MIT-licensed open source. Deploy your own instance on Railway (which has a free tier) and pay nothing for the software itself.</div></div>
   </div>
 </section>
 <section class="cta-banner"><h2>Ready to talk to your notes?</h2><p>Join students, researchers, and professionals who've stopped copy-pasting and started querying.</p><a href="/auth" class="btn btn-primary" style="padding:16px 36px;font-size:1.05rem">Connect Your Google Drive →</a></section>
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-brand"><div class="logo"><div class="logo-icon">🔗</div><span>Notability AI Bridge</span></div><p>An independent bridge between Notability's Google Drive backups and any MCP-compatible AI assistant. Built by a student who was tired of copy-pasting.</p></div>
-    <div class="footer-col"><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how-it-works">How it Works</a><a href="#faq">FAQ</a></div>
+    <div class="footer-col"><h4>Product</h4><a href="#features">Features</a><a href="#open-source">Open Source</a><a href="#how-it-works">How it Works</a><a href="#faq">FAQ</a></div>
     <div class="footer-col"><h4>Legal</h4><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="/google-api-disclosure">Google API Disclosure</a></div>
-    <div class="footer-col"><h4>Contact</h4><a href="mailto:owner@balchunassustainability.com">Email Support</a><a href="https://github.com/dbalchunas2-pixel/notability-ai-bridge">GitHub</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="mailto:owner@balchunassustainability.com">Email</a><a href="https://github.com/dbalchunas2-pixel/notability-ai-bridge">GitHub</a></div>
   </div>
   <div class="footer-bottom"><span>© 2026 Notability AI Bridge. Independent tool, not affiliated with Notability or Google.</span><span>Built with 💻 by David Balchunas</span></div>
 </footer>
