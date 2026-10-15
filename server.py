@@ -1,8 +1,8 @@
 """
-Notability MCP SaaS Server
-Multi-user MCP server that bridges Notability PDF auto-backups
-from Google Drive to AI assistants. Each user connects their own
-Google Drive via OAuth 2.0 and gets a unique API key.
+Notability AI Bridge - Self-Hostable MCP Server
+Bridges Notability PDF auto-backups from Google Drive to AI
+assistants. Each user connects their own Google Drive via
+OAuth 2.0 and gets a unique API key. Free and open source (MIT).
 
 Architecture:
   - FastMCP for MCP protocol (tools: list_folders, list_notes, read_note, search_notes)
@@ -40,7 +40,6 @@ from oauth import (
     get_user_folder_id, GOOGLE_CLIENT_ID,
 )
 from legal import PRIVACY_HTML, TERMS_HTML
-from billing import create_checkout_session, create_portal_session, handle_webhook
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("notability-mcp")
@@ -112,7 +111,7 @@ def _drive_get_subfolders(service, folder_id: str) -> list[dict]:
 
 # --- MCP Server with per-user tools ---
 
-mcp = FastMCP("notability-saas")
+mcp = FastMCP("notability-ai-bridge")
 
 
 def _track_usage(tool_name: str, params: str = ""):
@@ -399,13 +398,11 @@ async def api_usage(request: Request):
 
 
 async def health(request: Request):
-    return JSONResponse({"status": "ok", "service": "notability-mcp-saas"})
+    return JSONResponse({"status": "ok", "service": "notability-ai-bridge"})
 
 
 # --- HTML Templates ---
 # (Landing page and dashboard templates are large HTML strings)
-# Full templates at: https://github.com/dbalchunas2-pixel/notability-ai-bridge/blob/main/server.py
-
 
 
 def render_dashboard(user, stats, used_today, limit, mcp_url, welcome):
@@ -481,7 +478,7 @@ function copyText(text, btn) {{
 <div class="stat"><div class="num">{stats.get('last_30_days', 0)}</div><div class="label">last 30 days</div></div>
 <div class="stat"><div class="num">{stats.get('total_calls', 0)}</div><div class="label">all time</div></div>
 </div>
-<div class="usage-bar"><div class="usage-fill" style="width: {usage_pct}%;"></div></div>
+<div class="usage-bar"><div class="usage-fill" style="width: {usage_pct};"></div></div>
 <p style="color: var(--muted); margin-top: 8px; font-size: 0.85rem;">{used_today}/{limit_display} calls today</p>
 </div>
 <div class="card">
@@ -497,56 +494,13 @@ function copyText(text, btn) {{
 <h2>Setup Instructions</h2>
 <p style="color: var(--muted); font-size: 0.9rem;">Add this URL to any MCP-compatible AI assistant (Claude Desktop, Littlebird, etc.) as your MCP server endpoint.</p>
 </div>
-{f'<div class="card"><h2>Subscription</h2><p>Current plan: <strong>{user.get('plan', 'free')}</strong></p>{f'<a href="/upgrade?key={api_key}&plan=pro" style="display:inline-block;padding:10px 24px;background:#6366f1;color:white;text-decoration:none;border-radius:8px;font-weight:600;margin-top:12px;">Upgrade to Pro - $5/mo</a>' if user.get('plan', 'free') == 'free' else ''}{f'<a href="/portal?key={api_key}" style="display:inline-block;padding:8px 16px;background:#2a2d3a;color:#e4e4e7;text-decoration:none;border-radius:8px;font-size:0.85rem;margin-left:12px;">Manage Subscription</a>' if user.get('stripe_customer_id') else ''}</div>'}
 <footer><a href="/">Home</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a> | Notability AI Bridge</footer>
 </div>
 </body>
 </html>"""
 
 
-# --- Billing & Legal Routes ---
-
-async def upgrade(request):
-    """Start Stripe checkout for upgrading to a paid plan."""
-    api_key = request.query_params.get("key", "")
-    plan = request.query_params.get("plan", "pro")
-    if not api_key:
-        return JSONResponse({"error": "API key required"}, status_code=401)
-    user = get_user_by_api_key(api_key)
-    if not user:
-        return JSONResponse({"error": "Invalid API key"}, status_code=403)
-    try:
-        checkout_url = create_checkout_session(user["id"], plan, api_key)
-        return RedirectResponse(checkout_url)
-    except Exception as e:
-        return HTMLResponse(f"<h1>Checkout Error</h1><p>{e}</p><p><a href='/dashboard?key={api_key}'>Back</a></p>", status_code=500)
-
-async def customer_portal(request):
-    """Redirect to Stripe Customer Portal for subscription management."""
-    api_key = request.query_params.get("key", "")
-    if not api_key:
-        return JSONResponse({"error": "API key required"}, status_code=401)
-    user = get_user_by_api_key(api_key)
-    if not user:
-        return JSONResponse({"error": "Invalid API key"}, status_code=403)
-    customer_id = user.get("stripe_customer_id", "")
-    if not customer_id:
-        return HTMLResponse("<h1>No subscription found</h1><p>You don't have an active subscription to manage.</p>")
-    try:
-        portal_url = create_portal_session(customer_id, api_key)
-        return RedirectResponse(portal_url)
-    except Exception as e:
-        return HTMLResponse(f"<h1>Portal Error</h1><p>{e}</p>", status_code=500)
-
-async def stripe_webhook(request):
-    """Handle Stripe webhook events."""
-    body = await request.body()
-    signature = request.headers.get("stripe-signature", "")
-    try:
-        result = handle_webhook(body, signature)
-        return JSONResponse({"received": True, "result": result})
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=400)
+# --- Legal Routes ---
 
 async def privacy_page(request):
     """Serve the Privacy Policy page."""
@@ -568,9 +522,6 @@ def create_app():
     mcp.custom_route("/auth", methods=["GET"])(auth_start)
     mcp.custom_route("/auth/callback", methods=["GET"])(auth_callback)
     mcp.custom_route("/dashboard", methods=["GET"])(dashboard)
-    mcp.custom_route("/upgrade", methods=["GET"])(upgrade)
-    mcp.custom_route("/portal", methods=["GET"])(customer_portal)
-    mcp.custom_route("/webhook", methods=["POST"])(stripe_webhook)
     mcp.custom_route("/privacy", methods=["GET"])(privacy_page)
     mcp.custom_route("/terms", methods=["GET"])(terms_page)
     mcp.custom_route("/api/usage", methods=["GET"])(api_usage)
@@ -586,6 +537,5 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    logger.info(f"Starting Notability MCP SaaS on port {PORT}")
+    logger.info(f"Starting Notability AI Bridge on port {PORT}")
     mcp.run(transport="http", host="0.0.0.0", port=PORT)
-
