@@ -1,11 +1,20 @@
 # Notability AI Bridge
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new)
+
+<!-- To make the button deploy this exact repo: create a Railway template from
+     your fork (railway.com > New > Template from repo), then replace the link
+     above with https://railway.com/deploy/<your-template-id> -->
+
 Connect your Notability notes to any AI assistant. Search, read, and query your handwritten notes from Claude, ChatGPT, Littlebird, and any MCP-compatible tool.
+
+Free and open source (MIT). No subscriptions, no usage fees, no paywalled notes - you self-host it, so your notes live on your own infrastructure.
 
 ## How It Works
 
 1. Notability auto-backs up your notes as PDFs to Google Drive
-2. You authorize this app to read that Google Drive folder via OAuth 2.0
+2. You authorize your own instance to read that folder via OAuth 2.0
 3. You get a unique MCP URL to add to your AI assistant
 4. Your AI can now search and read all your Notability notes
 
@@ -18,45 +27,30 @@ Connect your Notability notes to any AI assistant. Search, read, and query your 
 | `read_note` | Read the full text content of a specific note by file ID |
 | `search_notes` | Full-text search across all your notes with context snippets |
 
-## Setup
+## Self-Hosting
 
-### 1. Google Cloud OAuth Setup
+The easiest path is Railway (free tier works):
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or use existing)
-3. Enable the **Google Drive API**
-4. Go to **Credentials** > **Create Credentials** > **OAuth client ID**
-5. Choose **Web application**
-6. Add your deployment URL + `/auth/callback` as an authorized redirect URI
-7. Copy the **Client ID** and **Client Secret**
+1. **Fork this repo**
+2. **Deploy it on Railway** - create a new project from your fork (or use the Deploy button above after creating a template)
+3. **Add a Volume** mounted at `/data` so SQLite persists across restarts
+4. **Create Google OAuth credentials**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a project, enable the **Google Drive API**
+   - Credentials > Create Credentials > OAuth client ID > Web application
+   - Add `https://your-app.up.railway.app/auth/callback` as an authorized redirect URI
+5. **Set environment variables** (see [.env.example](.env.example)):
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
+   - `OAUTH_REDIRECT_URI=https://your-app.up.railway.app/auth/callback`
+   - `BASE_URL=https://your-app.up.railway.app`
+6. Visit your deployment URL, click **Connect Your Google Drive**, and copy your MCP URL
 
-### 2. Deploy on Railway
+### Connect Your AI Assistant
 
-1. Fork this repo
-2. Create a new Railway project from the repo
-3. Add a **Volume** mounted at `/data` (for SQLite storage)
-4. Set environment variables:
+Use `https://your-app.up.railway.app/mcp/YOUR_API_KEY` as your MCP server endpoint.
 
-```
-GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your_client_secret
-OAUTH_REDIRECT_URI=https://your-app.up.railway.app/auth/callback
-BASE_URL=https://your-app.up.railway.app
-```
-
-5. Deploy
-
-### 3. User Onboarding
-
-1. Visit your deployment URL (e.g., `https://your-app.up.railway.app`)
-2. Click **Connect Your Google Drive**
-3. Authorize Google Drive access
-4. Get redirected to your dashboard with your unique MCP URL
-5. Copy the MCP URL and add it to your AI assistant
-
-### 4. Connect to Your AI Assistant
-
-**Claude Desktop:** Add to `claude_desktop_config.json`:
+**Claude Desktop:** add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
@@ -69,15 +63,23 @@ BASE_URL=https://your-app.up.railway.app
 
 **Littlebird:** Settings > Integrations > Add Custom MCP > paste URL
 
-**Any MCP client:** Use `https://your-app.up.railway.app/mcp/YOUR_API_KEY` as your MCP server endpoint.
+**Any MCP client:** the URL works as-is; the key can also go in an `Authorization: Bearer` header or `?key=` query param.
 
-## Pricing Tiers
+### Rate Limits
 
-| Plan | Price | Daily Limit | Features |
-|------|-------|-------------|----------|
-| Free | $0/mo | 50 calls | All 4 tools |
-| Pro | $5/mo | 1,000 calls | Priority support, advanced search |
-| Enterprise | Custom | Unlimited | SSO, SLA |
+A simple per-user daily rate limit ships in as abuse protection (default: 50 tool calls/day). Since you own the instance, it's just a constant - edit `PLAN_LIMITS` in `database.py` or set every user's plan to `unlimited`. There is no billing and no plan system.
+
+### Privacy
+
+Your instance requests read-only Google Drive access via OAuth 2.0. PDFs are streamed in-memory and never written to disk. Google may show an "Unverified app" warning for self-hosted apps - this is normal for personal OAuth projects and safe to proceed past for an instance only you use.
+
+## Development
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env  # fill in your values
+python server.py
+```
 
 ## Tech Stack
 
@@ -87,24 +89,10 @@ BASE_URL=https://your-app.up.railway.app
 - **Google OAuth 2.0** for per-user Drive access
 - **Railway** for deployment with persistent volume
 
-## API Key Authentication
-
-API keys can be passed in three ways:
-1. **URL path**: `/mcp/{api_key}` (recommended for MCP clients)
-2. **Authorization header**: `Authorization: Bearer {api_key}`
-3. **Query parameter**: `/mcp?key={api_key}`
-
-## Development
-
-```bash
-pip install -r requirements.txt
-export GOOGLE_CLIENT_ID=...
-export GOOGLE_CLIENT_SECRET=...
-export OAUTH_REDIRECT_URI=http://localhost:8080/auth/callback
-export BASE_URL=http://localhost:8080
-python server.py
-```
-
 ## Disclaimer
 
 Notability AI Bridge is an independent tool and is not affiliated with, endorsed by, or sponsored by Notability or Google. Notability is a trademark of Ginger Labs, Inc.
+
+## License
+
+[MIT](LICENSE)
